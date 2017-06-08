@@ -14,24 +14,23 @@ function onOpen(e){
   DocumentApp.getUi().createAddonMenu()
     .addItem('Create Campaign Doc','createCampaignDoc')
     .addSubMenu(DocumentApp.getUi().createMenu('Main Page')
-                .addItem('Add Section','addSection')
+                .addItem('Add Section','addSection'))
     .addSubMenu(DocumentApp.getUi().createMenu('Timeline')
                 .addItem('Add Regular Log',"norm")
                 .addItem('Add Secret Log','sec')
                 .addItem('Add Public Log','pub')
                 .addItem('Add Public Event','addPubE')
-                .addItem('Add PHO Thread','pho')
+                .addItem('Add PHO Thread','pho'))
     .addSubMenu(DocumentApp.getUi().createMenu('Important Docs/Know Where You Live')
                 .addItem('Add Group','addGrp')
                 .addItem('Add PRT','addPRT')
-                .addItem('Add Person','pers')
+                .addItem('Add Person','pers'))
     .addItem('Customizations','customizationsSideBar')
     .addSeparator()
     .addItem('Info','infoSideBar')
     .addToUi();
 }
 
-//generates the initial documents.
 //city, realCity, year, month, headingF, textF, currPlayers, quePlayers, cityEvent, image, area.
 function generate(a,b,c,d,e,f,g,h,i,j,k){
 var url;
@@ -85,7 +84,6 @@ var url;
   
   docSess.appendParagraph('Key').editAsText().setBold(true).setFontFamily(textFont);
   var tableR = docSess.appendTable();
-  
     
   //var tableR = docSess.appendTable().appendTableRow();
   //tableR.appendTableCell([],['Session: Regular Session. Treat as meta-knowledge.\n']);
@@ -190,7 +188,6 @@ var url;
  
 }
 
-//creates a new document based on the input.
 function createDoc(nameOfCity, type){
   var document;
   if(type == 'where'){
@@ -205,7 +202,6 @@ function createDoc(nameOfCity, type){
 return document;
 }
 
-//creates a generated section, varies based on whether it's custom or no.
 function addGeneratedSection(section, subtitle, doc, position){  
   var cell = [
    [section+'\n'+subtitle]
@@ -223,7 +219,6 @@ function addGeneratedSection(section, subtitle, doc, position){
   h.getElement().asText().setBold(false).setItalic(true).setFontSize(11).setFontFamily(userProperties.getProperty('tFont'));
 }
 
-//Adds a different log for use in recording sessions
 function addLog(typeOfLog){
 var myTable = [['merge!', 'summary'],['merge!','players']];
 var newTable = body.appendTable(myTable).setBorderColor('#434343');
@@ -266,7 +261,6 @@ cell2.setLinkUrl();
   }
 }
 
-//Creates a session page.
 function createSession(session){
   var sessBody = session.getBody();
   var heading = sessBody.insertParagraph(0,'#WD'+userProperties.getProperty('city')+' - x.x');
@@ -284,7 +278,6 @@ function createSession(session){
   sessBody.insert
 }
 
-//creates a public event
 function addPubE(){
   var cell = [
    ['🛈' + '   \t News']
@@ -296,7 +289,6 @@ function addPubE(){
   cell.editAsText().setBold(false).setItalic(false).setFontFamily(userProperties.getProperty('tFont'));
 }
 
-//adds a group to the 'Wiki'
 function addGrp(){
   var grp = body.appendParagraph('Group');
   grp.editAsText().setFontFamily(textFont);
@@ -307,7 +299,6 @@ function addGrp(){
   addPers(false);  
 }
 
-//adds the PRT group to the 'Wiki'
 function addPRT(){
   var prtHead = body.appendParagraph('PRT Dept -- : Leadership').setHeading(DocumentApp.ParagraphHeading.HEADING2);
   addPers(true);
@@ -317,7 +308,6 @@ function addPRT(){
   addPers(true);  
 }
 
-//adds a person. Current customization is limited but I intend to retrieve the color from PropertiesService at a later point.
 function addPers(isPrt){
   var cell = [['name','powers\ndescription'],['','information about them as a person']];
   var table = body.appendTable(cell);
@@ -365,6 +355,11 @@ function norm(){
 //-- End menu functions --//
 //-- Menu sidebars --//
 function customizationsSideBar(){
+  var html = HtmlService.createHtmlOutputFromFile('custos')    
+    .setTitle('Customizations')
+    .setWidth(600);
+  DocumentApp.getUi()
+     .showSidebar(html);
 }
 
 function infoSideBar(){

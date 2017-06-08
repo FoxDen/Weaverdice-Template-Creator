@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <base target="_top">
+  </head>
+  <style>
+  body{
+    margin: 1em;
+  }
+  div{
+    padding: 5px;
+  }
+  h4{
+    font-weight: 'bold';
+    padding: 2px;
+  }
+  label{
+    margin-right: 1em;
+    margin-bottom: 1em;
+    font-weight: 'bold';
+  }
+  footer{
+    font-size: x-small;
+  }
+  .players{
+    width: 40px;    
+    margin-bottom: 1em;
+  }
+  .check{
+    border: 1px solid black;
+  }
+  </style>
+  <body>
+    <form onsubmit="populate()" action="javascript:void(0);">
+    <div id='outline'>
+    <hr>
+    <h4>Necessary information</h4>
+      <div><label>City</label><br/><input type='text' name='cityField' id='cityField' width='10'>
+      <br>
+      <p>Is this a real city?&nbsp;&nbsp;<input type='checkbox' id='realCity' class='check'></p>
+      </div>
+      <div>
+      <label>State/Country</label><br/>
+      <input type='text' name='areaField' id='areaField' width='10'>
+      <br/>
+      </div>
+      <div><label>Month/Year</label><br/><input type='text' name='monthField' id='monthField' size='4'>/
+      <input type='text' name='yearField' id='yearField' size='4'>
+      </div>
+      
+      <div><label>Heading Font</label><input type='select' name='headingFont' id='headingFont'></div>
+      <div><label>Text Font</label><br/><input type='select' name='textFont' id='textFont'></div>
+      
+      <div><label>Current players</label><input type='number' id='playersCurrent' class='players'></div>
+      <div><label>Queued/Lottery players</label><input type='number' id='playersQueued'class='players'></div>
+      <div><label>Picture</label><br/><small>Is there a picture you would like to use? Please link that below.</small><br/><br/>
+      <input type='text' id='image' width='35'></div>
+      
+      <div><label>City event summary</label>
+        <br>
+        <br>
+        <textarea id='cityEvent'rows='15' cols='35'></textarea>
+      </div>
+      <div><input type="submit" value="Submit"></div>
+    </div>
+    </form>
+   <script>
+     function populate(){
+      var city = document.getElementById("cityField").value;
+      var realCity = document.getElementById("realCity").value;
+      var year = document.getElementById("yearField").value;
+      var month = document.getElementById("monthField").value;
+      var heading = document.getElementById("headingFont").value;
+      var text = document.getElementById("textFont").value;
+      var currPlayers = document.getElementById("playersCurrent").value;
+      var quePlayers = document.getElementById("playersQueued").value;
+      var cityEvent = document.getElementById("cityEvent").value;
+      var photo = document.getElementById("image").value;
+      var stCo = document.getElementById("areaField").value;
+      
+      google.script.run.generate(city, realCity, year, month, heading, text, currPlayers, quePlayers, cityEvent, photo, stCo);
+     }
+   </script>
+  </body>
+</html>
+
+
