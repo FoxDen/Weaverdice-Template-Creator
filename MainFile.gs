@@ -72,7 +72,7 @@ var url;
   wikiInsert.editAsText().setFontFamily(textFont);
   
   var modStaff = docWhere.appendParagraph('Wiki Moderation Staff:\n');
-  modStaff.editAsText().setBold(true);
+  modStaff.editAsText().setBold(0,21,true);
   
   addGeneratedSection('Groups','Know where you live. Only publicly available information, '+
   'not guaranteed to be accurate.',docWhere,5);
@@ -82,7 +82,7 @@ var url;
   addGeneratedSection('Timeline','The story so far. All information in logs not marked as public information '+
   'are to be treated as meta-knowledge.',docSess,0);
   
-  docSess.appendParagraph('Key').editAsText().setBold(true).setFontFamily(textFont);
+  docSess.appendParagraph('Key').editAsText().setBold(0,2,true).setFontFamily(textFont);
   var tableR = docSess.appendTable();
     
   //var tableR = docSess.appendTable().appendTableRow();
@@ -112,7 +112,7 @@ var url;
   date.editAsText().setItalic(true).setFontFamily(textFont).setFontSize(9).setForegroundColor('#878787');
   
   var cityBlurb = docBody.insertParagraph(2,i+'\n');
-  cityBlurb.editAsText().setItalic(false).setFontSize(11).setForegroundColor('#000000');
+  cityBlurb.editAsText().setFontSize(11).setForegroundColor('#000000').setItalic(false);
 
   addGeneratedSection('Links','A few useful documents', docBody,3);
   var map =  'Map of '+a;
@@ -214,31 +214,30 @@ function addGeneratedSection(section, subtitle, doc, position){
   }
   var t = table.findText(section);
   table.setBorderColor('#d2d2d2');
-  t.getElement().asText().setBold(true).setFontSize(12).setFontFamily(userProperties.getProperty('hFont'));
+  t.getElement().asText().setBold(0,section.length-1,true).setFontSize(12).setFontFamily(userProperties.getProperty('hFont'));
   var h = table.findText(subtitle);
-  h.getElement().asText().setBold(false).setItalic(true).setFontSize(11).setFontFamily(userProperties.getProperty('tFont'));
+  h.getElement().asText().setItalic(0,subtitle.length-1,true).setFontSize(11).setFontFamily(userProperties.getProperty('tFont'));
 }
 
 function addLog(typeOfLog){
 var myTable = [['merge!', 'summary'],['merge!','players']];
 var newTable = body.appendTable(myTable).setBorderColor('#434343');
 var row = newTable.getRow(0);
-var cell = row.getCell(0).setWidth(50);
+var cell = row.getCell(0).setWidth(50); //merge
 cell.setVerticalAlignment(DocumentApp.VerticalAlignment.CENTER);
 cell.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER);
-var cell1 = row.getCell(1).editAsText().setBold(false).setFontFamily(userProperties.getProperty('tFont'));
+cell.editAsText().setBold(0,5,true).setFontFamily(userProperties.getProperty('tFont'));
 
 var row2 = newTable.getRow(1);
-var cell2 = row2.getCell(0).setWidth(50);
-cell2.setVerticalAlignment(DocumentApp.VerticalAlignment.CENTER);
+var cell2 = row2.getCell(0).setWidth(50) //merge
 cell2.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER);
-var cell3 = row2.getCell(1).editAsText().setBold(false);
+cell2.editAsText().setBold(0,5,true).setItalic(false);
 
 var sessionLog = createDoc(userProperties.getProperty('city'),'session');
 var returnedLog = createSession(sessionLog);
 
-cell1.setLinkUrl();
-cell2.setLinkUrl();
+//cell1.setLinkUrl();
+//cell2.setLinkUrl();
 
   switch(typeOfLog)
   {
@@ -268,14 +267,27 @@ function createSession(session){
   heading.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
   heading.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   
-  var quote = sessBody.insertParagraph(1,'""');
+  var quote = sessBody.insertParagraph(1,'"quote"');
   quote.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
-  quote.editAsText().setItalic(true);
+  quote.editAsText().setItalic(0,6,true).setFontFamily(userProperties.getProperty('tFont'));
   
-  var tableSumm = sessBody.insertTable(3);
+  var tableSumm = sessBody.insertTable(2);
+
   var tellerUrl = 'https://tellergram.github.io/log_formatter.html';
-  tableSumm.addTableRow();
-  sessBody.insert
+  var row = tableSumm.appendTableRow();
+  row.appendTableCell(tellerUrl+'\n\n\n\n');
+  var cell = row.getCell(0).getChild(0);
+  cell.asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+  row.getCell(0).setBackgroundColor('#cccccc').editAsText().setLinkUrl(0,tellerUrl.length-1,tellerUrl);
+  
+  sessBody.insertHorizontalRule(3);
+  var cells = [['← Previous',userProperties.getProperty('month')+', [Day], '+userProperties.getProperty('year'), 'Next →']];
+  var navTable = sessBody.insertTable(4,cells).setBorderWidth(0);
+  var navRow = navTable.getRow(0);
+  var cell1 = navRow.getCell(0);
+  var cell2 = navRow.getCell(1).getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+  var cell3 = navRow.getCell(2).getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.RIGHT);
+  sessBody.insertHorizontalRule(5);
 }
 
 function addPubE(){
@@ -291,10 +303,10 @@ function addPubE(){
 
 function addGrp(){
   var grp = body.appendParagraph('Group');
-  grp.editAsText().setFontFamily(textFont);
+  grp.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   grp.setHeading(DocumentApp.ParagraphHeading.HEADING2);
   var info = body.appendParagraph('Information about said group here.');
-  info.editAsText().setItalic(true).setFontFamily(userProperties.getProperty('tFont'));
+  info.editAsText().setItalic(0,32,true).setFontFamily(userProperties.getProperty('tFont'));
   
   addPers(false);  
 }
@@ -314,18 +326,15 @@ function addPers(isPrt){
   var cell1 = table.getCell(0,0);
   cell1.setVerticalAlignment(DocumentApp.VerticalAlignment.CENTER);
   cell1.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER);
-  cell1.editAsText().setBold(true).setItalic(false)..setFontFamily(userProperties.getProperty('tFont')).setFontSize(11);
+  cell1.editAsText().setBold(0,3,true).setFontFamily(userProperties.getProperty('tFont')).setFontSize(11);
   
   cell1.setWidth(50);
   
   var pow = table.findText('powers');
-  pow.getElement().asText().setBold(true).setItalic(false);
-  var description = table.findText('description').getElement().asText().setItalic(true).setBold(false).setFontFamily(userProperties.getProperty('tFont'));
+  pow.getElement().asText().setBold(0,5,true);
+  var description = table.findText('description').getElement().asText().setItalic(0,10,true).setBold(false);
   var cell2 = table.getCell(0,1);
   cell2.setBackgroundColor('#dddddd');
-  
-  var cell4 = table.getCell(1,1);
-  cell4.editAsText().setItalic(false);
   
   if(isPrt == true){
     cell1.setBackgroundColor('#efefef');
