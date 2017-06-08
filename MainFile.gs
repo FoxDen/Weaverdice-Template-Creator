@@ -1,7 +1,7 @@
 var body = DocumentApp.getActiveDocument().getBody();
 var userProperties = PropertiesService.getUserProperties();
 userProperties.setProperty('hFont', 'Arial');
-userProperties.setProperty('tFont', 'Arial');
+userProperties.setProperty('tFont', 'Calibri');
 userProperties.setProperty('city', 'None input.');
 userProperties.setProperty('month','January');
 userProperties.setProperty('year','2009');
@@ -83,14 +83,11 @@ var url;
   'are to be treated as meta-knowledge.',docSess,0);
   
   docSess.appendParagraph('Key').editAsText().setBold(0,2,true).setFontFamily(textFont);
-  var tableR = docSess.appendTable();
-    
-  //var tableR = docSess.appendTable().appendTableRow();
-  //tableR.appendTableCell([],['Session: Regular Session. Treat as meta-knowledge.\n']);
-  //tableR.appendTableCell([],['Digression: A written exchange, speech, or relevant document. Treat as meta-knowledge.\n']);
-  //tableR.appendTableCell([],['Public Information: Events or information that most characters would be at least broadly aware of.\n']);;
-  //tableR.appendTableCell([],['Obscured: Session is private, or lost to the sands of time.\n']);
-  //tableR.appendTableCell(['Obscured: Session is private, or lost to the sands of time.']);
+  var tableR0, tableR1,tableR2,tableR3;
+  createKey('#999999','Session:', 'Regular Session.', 'Treat as meta-knowledge.', '#dddddd', tableR0, docSess);
+  createKey('#6fa8dc','Digression:','A written exchange, speech, or relevant document.', 'Treat as meta-knowledge.', '#cfe2f3', tableR1, docSess);
+  createKey('#ffd966','Public Information:','Events or information that most characters would be at least broadly aware of.','','#fff2cc', tableR2, docSess);
+  createKey('#000000','Obscured:', 'Session is private, or lost to the sands of time.', '', '#434343', tableR3, docSess);
   
   var tableOfContents = docSess.appendParagraph('\nTable of Contents\n');
   var arc1 = 'Arc 1';
@@ -186,6 +183,21 @@ var url;
     }
   }
  
+}
+
+function createKey(borderColor, secondCellTextB, secondCellTextR,secondCellTextI,backgroundColor, innerTable, docBody){
+  var endingLength = secondCellTextB.length+secondCellTextR.length+secondCellTextI.length;
+  innerTable = docBody.appendTable().setBorderColor(borderColor).appendTableRow();
+  innerTable.appendTableCell(['']);
+  innerTable.appendTableCell([secondCellTextB+' '+secondCellTextR+' '+secondCellTextI]);
+  var cell01 = innerTable.getCell(0).setWidth(30);
+  cell01.setBackgroundColor(backgroundColor);
+  var cell02 = innerTable.getCell(1).editAsText();
+  cell02.setBold(0,secondCellTextB.length-1,true);
+  if(secondCellTextI.length>1){
+    var italic = cell02.findText(secondCellTextI);
+    italic.getElement().asText().setItalic(secondCellTextB.length+secondCellTextR.length,endingLength,true);
+  }
 }
 
 function createDoc(nameOfCity, type){
