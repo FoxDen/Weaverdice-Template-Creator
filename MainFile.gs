@@ -148,9 +148,11 @@ var url;
   headerStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#ffffff';
   headerStyle[DocumentApp.Attribute.BOLD] = true;
   headerStyle[DocumentApp.Attribute.ITALIC] = false;
+  headerStyle[DocumentApp.Attribute.FONT_FAMILY] = headingFont;
   var cellStyle = {};
   cellStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#000000';
   cellStyle[DocumentApp.Attribute.BOLD] = false;
+  cellStyle[DocumentApp.Attribute.FONT_FAMILY] = textFont;
   var table = docBody.insertTable(9);
     for(var i = 0;i<=g;i++){
       var tr = table.appendTableRow()
@@ -252,18 +254,19 @@ function addGeneratedSection(section, subtitle, doc, position){
 }
 
 function addLog(typeOfLog){
+body.editAsText().setFontFamily(userProperties.getProperty('tFont'));
 var myTable = [['merge!', 'summary'],['merge!','players']];
 var newTable = body.appendTable(myTable).setBorderColor('#434343');
 var row = newTable.getRow(0);
 var cell = row.getCell(0).setWidth(50); //merge
 cell.setVerticalAlignment(DocumentApp.VerticalAlignment.CENTER);
 cell.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER);
-cell.editAsText().setBold(0,5,true).setFontFamily(userProperties.getProperty('tFont'));
+cell.editAsText().setBold(0,5,true).setItalic(false);
 
 var row2 = newTable.getRow(1);
 var cell2 = row2.getCell(0).setWidth(50) //merge
 cell2.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER);
-cell2.editAsText().setBold(0,5,true).setItalic(false).setFontFamily(userProperties.getProperty('tFont'));
+cell2.editAsText().setBold(0,5,true).setItalic(false);
 
 var sessionLog = createDoc(userProperties.getProperty('city'),'session');
 var sessionLogUrl = sessionLog.getUrl();
@@ -299,15 +302,15 @@ cell2.getChild(0).asText().setLinkUrl(0, 5, sessionLogUrl);
 
 function createSession(session, isThread){
   var sessBody = session.getBody();
+  sessBody.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   if(isThread == false){
   var heading = sessBody.insertParagraph(0,'#WD'+userProperties.getProperty('city')+' - x.x');
   heading.setHeading(DocumentApp.ParagraphHeading.HEADING2);
   heading.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
-  heading.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   
   var quote = sessBody.insertParagraph(1,'"quote"');
   quote.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
-  quote.editAsText().setItalic(0,6,true).setFontFamily(userProperties.getProperty('tFont'));
+  quote.editAsText().setItalic(0,6,true);
   
   var tableSumm = sessBody.insertTable(2);
 
@@ -345,6 +348,7 @@ function createSession(session, isThread){
 }
 
 function addPubE(){
+  body.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   var cell = [
    ['🛈' + '   \t News']
    ];
@@ -352,20 +356,22 @@ function addPubE(){
   table.setBorderColor('#f1c232');
   var cell = table.getRow(0).getCell(0).setBackgroundColor('#fff2cc');
   cell.setVerticalAlignment(DocumentApp.VerticalAlignment.CENTER);
-  cell.editAsText().setBold(false).setItalic(false).setFontFamily(userProperties.getProperty('tFont'));
+  cell.editAsText().setBold(false).setItalic(false);
 }
 
 function addGrp(){
+  body.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   var grp = body.appendParagraph('Group');
   grp.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   grp.setHeading(DocumentApp.ParagraphHeading.HEADING2);
   var info = body.appendParagraph('Information about said group here.');
-  info.editAsText().setItalic(0,32,true).setFontFamily(userProperties.getProperty('tFont'));
+  info.editAsText().setItalic(0,32,true);
   
   addPers(false);  
 }
 
 function addPRT(){
+  body.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   var prtHead = body.appendParagraph('PRT Dept -- : Leadership').setHeading(DocumentApp.ParagraphHeading.HEADING2);
   addPers(true);
   var prtPrt = body.appendParagraph('PRT Dept -- : Protectorate').setHeading(DocumentApp.ParagraphHeading.HEADING2);
@@ -375,12 +381,13 @@ function addPRT(){
 }
 
 function addPers(isPrt){
+  body.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   var cell = [['name','powers\ndescription'],['','information about them as a person']];
   var table = body.appendTable(cell);
   var cell1 = table.getCell(0,0);
   cell1.setVerticalAlignment(DocumentApp.VerticalAlignment.CENTER);
   cell1.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER);
-  cell1.editAsText().setBold(0,3,true).setFontFamily(userProperties.getProperty('tFont')).setFontSize(11);
+  cell1.editAsText().setBold(0,3,true).setFontSize(11);
   
   cell1.setWidth(50);
   
