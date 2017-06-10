@@ -6,7 +6,7 @@
   </head>
   <style>
   body{
-    margin: 1em;
+    padding: 1em;
   }
   div{
     padding: 5px;
@@ -17,8 +17,6 @@
   }
   label{
     margin-right: 1em;
-    margin-bottom: 1em;
-    font-weight: 'bold';
   }
   footer{
     font-size: x-small;
@@ -30,38 +28,42 @@
   .check{
     border: 1px solid black;
   }
+  small{
+    color:grey;
+  }
   </style>
   <body>
     <form onsubmit="populate()" action="javascript:void(0);">
     <div id='outline'>
-    <hr>
     <h4>Necessary information</h4>
-      <div><label>City</label><br/><input type='text' name='cityField' id='cityField' width='10'>
+      <div><label>City</label><br/><input type='text' name='cityField' id='cityField' width='10' placeholder='ex: Dearborn' required>
       <br>
       <p>Is this a real city?&nbsp;&nbsp;<input type='checkbox' id='realCity' class='check'></p>
       </div>
       <div>
       <label>State/Country</label><br/>
-      <input type='text' name='areaField' id='areaField' width='10'>
+      <small>Please put in full name of state/country.</small>
+      <input type='text' name='areaField' id='areaField' width='10' placeholder='Michigan' required>
       <br/>
       </div>
-      <div><label>Month/Year</label><br/><input type='text' name='monthField' id='monthField' size='4'>/
-      <input type='text' name='yearField' id='yearField' size='4'>
+      <div><label>Month/Year</label><br/><input type='text' name='monthField' id='monthField' size='4' placeholder='May' required>/
+      <input type='text' name='yearField' id='yearField' size='4' maxlength='4' placeholder='2011' required>
       </div>
       <hr>
-      <div><label>Heading Font</label><input type='select' name='headingFont' id='headingFont'></div>
-      <div><label>Text Font</label><br/><input type='select' name='textFont' id='textFont'></div>
+      <div><small>Please ensure your font is capitalized and locatable in your Google Docs sheet.</small></div>
+      <div><label>Heading Font</label><input type='select' name='headingFont' id='headingFont' placeholder='Arial' ></div>
+      <div><label>Text Font</label><br/><input type='select' name='textFont' id='textFont' placeholder='Arial' ></div>
       <hr>
-      <div><label>Current players</label><input type='number' id='playersCurrent' class='players'></div>
-      <div><label>Queued/Lottery players</label><input type='number' id='playersQueued'class='players'></div>
+      <div><label>Current players</label><input type='number' id='playersCurrent' class='players' value=0></div>
+      <div><label>Queued/Lottery players</label><input type='number' id='playersQueued'class='players' value=0></div>
       <hr>
-      <div><label>Picture</label><br/><small>Is there a picture you would like to use? Please link that below.</small><br/>
+      <div><label>Picture</label><br/><small>Is there a picture you would like to use? Please link that below. Accepts jpg, png and gif formats.</small><br/>
       <input type='text' id='image' width='40'></div>
       
       <div><label>City event summary</label>
         <br>
         <br>
-        <textarea id='cityEvent'rows='15' cols='33'></textarea>
+        <textarea id='cityEvent'rows='15' cols='33' placeholder='In Dearborn, things are never as they seem...'></textarea>
       </div>
       <hr>
       <div><input type="submit" value="Submit"></div>
@@ -82,8 +84,9 @@
       var stCo = document.getElementById("areaField").value;
       if(currPlayers<0||quePlayers<0){
         alert("The number of players is negative.");
-      }else      
+      }      
         google.script.run.generate(city, realCity, year, month, heading, text, currPlayers, quePlayers, cityEvent, photo, stCo);
+        alert("Completed!");
      }
    </script>
   </body>

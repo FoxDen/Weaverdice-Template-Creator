@@ -1,14 +1,17 @@
 var body = DocumentApp.getActiveDocument().getBody();
 var userProperties = PropertiesService.getUserProperties();
-userProperties.setProperty('hFont', 'Arial');
-userProperties.setProperty('tFont', 'Calibri');
-userProperties.setProperty('city', 'None input.');
-userProperties.setProperty('month','January');
-userProperties.setProperty('year','2009');
-userProperties.setProperty('color','#28754E');
+
 
 function onInstall(e){
     onOpen(e)
+    userProperties.setProperty('hFont', 'Arial');
+    userProperties.setProperty('tFont', 'Arial');
+    userProperties.setProperty('city', 'Default');
+    userProperties.setProperty('month','January');
+    userProperties.setProperty('year','2009');
+    userProperties.setProperty('color','#ffffff');
+    userProperties.setProperty('folderName','Weaverdice RP Campaign' );
+    userProperties.setProperty('folderSession','Sessions');
 }
 
 function onOpen(e){
@@ -59,10 +62,18 @@ var url;
   var docS = createDoc(a, 'sessions');
   var docSess = docS.getBody();
   var docSUrl = docS.getBody();
-  
+    
   docBody.setMarginLeft(40).setMarginRight(40);
   docWhere.setMarginLeft(40).setMarginRight(40);
   docSess.setMarginLeft(40).setMarginRight(40);
+  
+  //-- Add to folders --//
+  var main = DriveApp.getFolderById(userProperties.getProperty('folderMainId'));
+  main.addFile(docB);
+  main.addFile(docW);
+  
+  var session = DriveApp.getFolderById(userProperties.getProperty('folderSessionId'));
+  session.addFile(docS);
   
   //-- Create 'Where you Live' doc --//
   
@@ -286,6 +297,8 @@ cell2.getChild(0).asText().setLinkUrl(0, 5, sessionLogUrl);
       cell2.setBackgroundColor('#dddddd');
       returnedLog = createSession(sessionLog,false);
   }
+
+  
 }
 
 function createSession(session, isThread){
@@ -328,11 +341,11 @@ function createSession(session, isThread){
     var cellTable1 = table.getCell(0, 0);
     cellTable1.setWidth(100).setBackgroundColor('#a4c2f4');
     cellTable1.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER).setForegroundColor('#000000').setBold(false);
-    
     var cellTable2 = table.getCell(0, 1);
     cellTable2.setWidth(400).setBackgroundColor('#cfe2f3');
     cellTable2.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.RIGHT).setForegroundColor('#000000').setBold(false).setItalic(true);
-    }
+    }  
+  
 }
 
 function addPubE(){
