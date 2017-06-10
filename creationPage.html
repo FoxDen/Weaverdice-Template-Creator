@@ -57,7 +57,7 @@
       <div><label>Current players</label><input type='number' id='playersCurrent' class='players' value=0></div>
       <div><label>Queued/Lottery players</label><input type='number' id='playersQueued'class='players' value=0></div>
       <hr>
-      <div><label>Picture</label><br/><small>Is there a picture you would like to use? Please link that below. Accepts jpg, png and gif formats.</small><br/>
+      <div><label>Picture</label><br/><small>Is there a picture URL you would like to use? Please link that below.</small><br/>
       <input type='text' id='image' width='40'></div>
       
       <div><label>City event summary</label>
@@ -84,9 +84,10 @@
       var stCo = document.getElementById("areaField").value;
       if(currPlayers<0||quePlayers<0){
         alert("The number of players is negative.");
-      }      
+      } else{
         google.script.run.generate(city, realCity, year, month, heading, text, currPlayers, quePlayers, cityEvent, photo, stCo);
         alert("Completed!");
+        }
      }
    </script>
   </body>

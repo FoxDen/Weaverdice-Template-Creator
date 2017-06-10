@@ -3,7 +3,7 @@ var userProperties = PropertiesService.getUserProperties();
 
 
 function onInstall(e){
-    onOpen(e)
+    onOpen(e);
     userProperties.setProperty('hFont', 'Arial');
     userProperties.setProperty('tFont', 'Arial');
     userProperties.setProperty('city', 'Default');
@@ -37,6 +37,7 @@ function onOpen(e){
 
 //city, realCity, year, month, headingF, textF, currPlayers, quePlayers, cityEvent, image, area.
 function generate(a,b,c,d,e,f,g,h,i,j,k){
+body.appendParagraph(a+b+c+d+e+f+g+h+i+j+k);
 var url;
   if(e!=''&&f!=''){
   userProperties.setProperty('hFont', e);
@@ -44,7 +45,8 @@ var url;
   headingFont = userProperties.getProperty('hFont');
   textFont = userProperties.getProperty('tFont');
   }
-  if(j!=''||j.includes('.jpg')||j.includes('.png')||j.includes('.gif')){
+  
+  if(j!=''){
     url = j;
   } else{
     url = "http://www.psdgraphics.com/file/city-skyline-silhouette.jpg";
@@ -52,6 +54,8 @@ var url;
   userProperties.setProperty('city', a);
   userProperties.setProperty('month',c);
   userProperties.setProperty('year', b);
+  
+  body.appendParagraph(userProperties.getProperty('city'))
   
   var docB = createDoc(a, 'main');
   var docBody = docB.getBody();
@@ -66,15 +70,7 @@ var url;
   docBody.setMarginLeft(40).setMarginRight(40);
   docWhere.setMarginLeft(40).setMarginRight(40);
   docSess.setMarginLeft(40).setMarginRight(40);
-  
-  //-- Add to folders --//
-  var main = DriveApp.getFolderById(userProperties.getProperty('folderMainId'));
-  main.addFile(docB);
-  main.addFile(docW);
-  
-  var session = DriveApp.getFolderById(userProperties.getProperty('folderSessionId'));
-  session.addFile(docS);
-  
+ 
   //-- Create 'Where you Live' doc --//
   
   var heading = docWhere.insertParagraph(0,'Parahumans Online');
@@ -267,7 +263,7 @@ cell.editAsText().setBold(0,5,true).setFontFamily(userProperties.getProperty('tF
 var row2 = newTable.getRow(1);
 var cell2 = row2.getCell(0).setWidth(50) //merge
 cell2.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER);
-cell2.editAsText().setBold(0,5,true).setItalic(false);
+cell2.editAsText().setBold(0,5,true).setItalic(false).setFontFamily(userProperties.getProperty('tFont'));
 
 var sessionLog = createDoc(userProperties.getProperty('city'),'session');
 var sessionLogUrl = sessionLog.getUrl();
@@ -332,7 +328,7 @@ function createSession(session, isThread){
   sessBody.insertHorizontalRule(5);
   } else {
     sessBody.editAsText().setBackgroundColor('#073763').setFontFamily(userProperties.getProperty('tFont')).setForegroundColor('#ffffff').setBold(true);
-    sessBody.insertParagraph(0,"►Topic: Insert name").setIndentFirstLine(30);
+    sessBody.insertParagraph(0,"► Topic: Insert name").setIndentFirstLine(30);
     sessBody.insertParagraph(1,"In: Boards ► Places ► America ► "+userProperties.getProperty('area')+" ► "+userProperties.getProperty('city')).setIndentFirstLine(30);
    
     var cells = [['','']]
