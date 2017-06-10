@@ -9,6 +9,7 @@ function onInstall(e){
     userProperties.setProperty('city', 'Default');
     userProperties.setProperty('month','January');
     userProperties.setProperty('year','2009');
+    userProperties.setProperty('area','USA');
     userProperties.setProperty('color','#ffffff');
     userProperties.setProperty('folderName','Weaverdice RP Campaign' );
     userProperties.setProperty('folderSession','Sessions');
@@ -37,7 +38,6 @@ function onOpen(e){
 
 //city, realCity, year, month, headingF, textF, currPlayers, quePlayers, cityEvent, image, area.
 function generate(a,b,c,d,e,f,g,h,i,j,k){
-body.appendParagraph(a+b+c+d+e+f+g+h+i+j+k);
 var url;
   if(e!=''&&f!=''){
   userProperties.setProperty('hFont', e);
@@ -54,8 +54,7 @@ var url;
   userProperties.setProperty('city', a);
   userProperties.setProperty('month',c);
   userProperties.setProperty('year', b);
-  
-  body.appendParagraph(userProperties.getProperty('city'))
+  userProperties.setProperty('area', k);
   
   var docB = createDoc(a, 'main');
   var docBody = docB.getBody();
@@ -65,39 +64,37 @@ var url;
   var docWUrl = docW.getUrl();
   var docS = createDoc(a, 'sessions');
   var docSess = docS.getBody();
-  var docSUrl = docS.getBody();
+  var docSUrl = docS.getUrl();
     
   docBody.setMarginLeft(40).setMarginRight(40);
   docWhere.setMarginLeft(40).setMarginRight(40);
   docSess.setMarginLeft(40).setMarginRight(40);
  
   //-- Create 'Where you Live' doc --//
-  
+  docWhere.editAsText().setFontFamily(textFont);
   var heading = docWhere.insertParagraph(0,'Parahumans Online');
   heading.setHeading(DocumentApp.ParagraphHeading.HEADING1);
   var subheading = docWhere.insertParagraph(1,'Know where you live: '+a);
   subheading.setHeading(DocumentApp.ParagraphHeading.SUBTITLE);
   heading.editAsText().setBold(true).setFontFamily(headingFont);
-  subheading.editAsText().setBold(false);
+  subheading.editAsText().setBold(false).setFontFamily(textFont);
   
   var wikiInsert = docWhere.insertParagraph(2,"Welcome to the Parahumans Online wiki for "+a+", "+ k +
   ", and its surroundings. Please contact the local moderation team if you'd like to contribute. "+
   "You'll require a verified PHO account in the "+ k +" subforum, and edits you make to the wiki will need to "+
   "be approved by a moderator until you've made enough valid contributions.");
-  wikiInsert.editAsText().setFontFamily(textFont);
   
   var modStaff = docWhere.appendParagraph('Wiki Moderation Staff:\n');
-  modStaff.editAsText().setBold(0,21,true);
+  modStaff.editAsText().setBold(0,21,true).setFontFamily(textFont);
   
   addGeneratedSection('Groups','Know where you live. Only publicly available information, '+
   'not guaranteed to be accurate.',docWhere,5);
   
    //-- Create 'Sessions Log' doc --//
-  
+  docSess.editAsText().setFontFamily(textFont);
   addGeneratedSection('Timeline','The story so far. All information in logs not marked as public information '+
   'are to be treated as meta-knowledge.',docSess,0);
-  
-  docSess.appendParagraph('Key').editAsText().setBold(0,2,true).setFontFamily(textFont);
+  docSess.appendParagraph('Key').editAsText().setBold(0,2,true);
   var tableR0, tableR1,tableR2,tableR3;
   createKey('#999999','Session:', 'Regular Session.', 'Treat as meta-knowledge.', '#dddddd', tableR0, docSess);
   createKey('#6fa8dc','Digression:','A written exchange, speech, or relevant document.', 'Treat as meta-knowledge.', '#cfe2f3', tableR1, docSess);
@@ -116,12 +113,12 @@ var url;
   var arc = docSess.appendParagraph('\n'+arc1);
   
   //-- Create 'Main Player Info' doc --//
-  
+  docBody.editAsText().setFontFamily(textFont);
   var imageInsert = UrlFetchApp.fetch(url);
   docBody.insertImage(0, imageInsert).setHeight(200).setWidth(708);
   var date = docBody.insertParagraph(1,d+' '+c);
   date.setAlignment(DocumentApp.HorizontalAlignment.RIGHT).setLineSpacing(0);
-  date.editAsText().setItalic(true).setFontFamily(textFont).setFontSize(9).setForegroundColor('#878787');
+  date.editAsText().setItalic(true).setFontSize(9).setForegroundColor('#878787');
   
   var cityBlurb = docBody.insertParagraph(2,i+'\n');
   cityBlurb.editAsText().setFontSize(11).setForegroundColor('#000000').setItalic(false);
@@ -153,11 +150,16 @@ var url;
   cellStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#000000';
   cellStyle[DocumentApp.Attribute.BOLD] = false;
   cellStyle[DocumentApp.Attribute.FONT_FAMILY] = textFont;
+  var paraStyle = {};
+  paraStyle[DocumentApp.Attribute.SPACING_AFTER] = 0;
+  paraStyle[DocumentApp.Attribute.LINE_SPACING] = .5;
   var table = docBody.insertTable(9);
     for(var i = 0;i<=g;i++){
       var tr = table.appendTableRow()
       for(var k = 0; k<4;k++){
         var td = tr.appendTableCell('');
+        var para = td.getChild(0).asParagraph();
+        para.setAttributes(paraStyle);
         if(i==0){
           td.setAttributes(headerStyle);
           switch(k){
@@ -176,12 +178,19 @@ var url;
             default:
               break;
           }
-        } else{ td.setAttributes(cellStyle);}
+        } else{ 
+            td.setAttributes(cellStyle).setPaddingTop(1).setPaddingBottom(1);      
+         }
       }
     }  
   var dead = docBody.insertParagraph(10,'Dead and Gone').setHeading(DocumentApp.ParagraphHeading.HEADING4);
   var deadCells = [['Player', 'Character','Status','Notes']];
   var deadTable = docBody.insertTable(11, deadCells);
+  for(var i = 0;i<4;i++){
+    var td = deadTable.getCell(0,i);
+    td.setAttributes(headerStyle);
+    td.getChild(0).asParagraph().setAttributes(paraStyle);
+  }
 
   addGeneratedSection('Queue','Those eager to join the fray', docBody,12);
   var queue = docBody.insertTable(13);
@@ -189,6 +198,8 @@ var url;
     var tr = queue.appendTableRow()
     for(var k = 0; k<2;k++){
       var td = tr.appendTableCell('');
+      var para = td.getChild(0).asParagraph();
+      para.setAttributes(paraStyle);
       if(i==0){
         td.setAttributes(headerStyle);
         switch(k){
@@ -201,7 +212,9 @@ var url;
           default:
             break;
         }
-      } else{td.setAttributes(cellStyle); }
+      } else{
+          td.setAttributes(cellStyle).setPaddingTop(1).setPaddingBottom(1); 
+      }
     }
   }
  
@@ -212,10 +225,11 @@ function createKey(borderColor, secondCellTextB, secondCellTextR,secondCellTextI
   innerTable = docBody.appendTable().setBorderColor(borderColor).appendTableRow();
   innerTable.appendTableCell(['']);
   innerTable.appendTableCell([secondCellTextB+' '+secondCellTextR+' '+secondCellTextI]);
-  var cell01 = innerTable.getCell(0).setWidth(30);
+  var cell01 = innerTable.getCell(0).setWidth(20).setPaddingTop(1).setPaddingBottom(1);
   cell01.setBackgroundColor(backgroundColor);
-  var cell02 = innerTable.getCell(1).editAsText();
-  cell02.setBold(0,secondCellTextB.length-1,true);
+  cell01.getChild(0).asParagraph().setLineSpacing(.5);
+  var cell02 = innerTable.getCell(1).setPaddingTop(1).setPaddingBottom(1);
+  cell02.editAsText().setBold(0,secondCellTextB.length-1,true);
   if(secondCellTextI.length>1){
     var italic = cell02.findText(secondCellTextI);
     italic.getElement().asText().setItalic(secondCellTextB.length+secondCellTextR.length,endingLength,true);
@@ -348,7 +362,6 @@ function createSession(session, isThread){
 }
 
 function addPubE(){
-  body.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   var cell = [
    ['🛈' + '   \t News']
    ];
@@ -356,46 +369,52 @@ function addPubE(){
   table.setBorderColor('#f1c232');
   var cell = table.getRow(0).getCell(0).setBackgroundColor('#fff2cc');
   cell.setVerticalAlignment(DocumentApp.VerticalAlignment.CENTER);
-  cell.editAsText().setBold(false).setItalic(false);
+  cell.editAsText().setBold(false).setItalic(false).editAsText().setFontFamily(userProperties.getProperty('tFont'));
 }
 
 function addGrp(){
-  body.editAsText().setFontFamily(userProperties.getProperty('tFont'));
+  body.editAsText();
   var grp = body.appendParagraph('Group');
   grp.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   grp.setHeading(DocumentApp.ParagraphHeading.HEADING2);
   var info = body.appendParagraph('Information about said group here.');
-  info.editAsText().setItalic(0,32,true);
+  info.editAsText().setItalic(0,32,true).setFontFamily(userProperties.getProperty('tFont'));;
   
   addPers(false);  
 }
 
 function addPRT(){
-  body.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   var prtHead = body.appendParagraph('PRT Dept -- : Leadership').setHeading(DocumentApp.ParagraphHeading.HEADING2);
+  prtHead.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   addPers(true);
   var prtPrt = body.appendParagraph('PRT Dept -- : Protectorate').setHeading(DocumentApp.ParagraphHeading.HEADING2);
+  prtHead.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   addPers(true);
   var prtWards = body.appendParagraph('PRT Dept -- : Wards').setHeading(DocumentApp.ParagraphHeading.HEADING2);
+  prtWards.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   addPers(true);  
 }
 
 function addPers(isPrt){
-  body.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   var cell = [['name','powers\ndescription'],['','information about them as a person']];
   var table = body.appendTable(cell);
   var cell1 = table.getCell(0,0);
   cell1.setVerticalAlignment(DocumentApp.VerticalAlignment.CENTER);
   cell1.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER);
-  cell1.editAsText().setBold(0,3,true).setFontSize(11);
+  cell1.editAsText().setBold(0,3,true).setFontSize(11).editAsText().setFontFamily(userProperties.getProperty('tFont'));
   
   cell1.setWidth(50);
+  var cell12 = table.getCell(1,1); //merge
+  var cell11 = table.getCell(1,0); //merge
+  cell12.getChild(0).editAsText().setFontFamily(userProperties.getProperty('tFont'));
   
+  var cell03 = table.getCell(0,1);  
+  cell03.getChild(0).editAsText().setFontFamily(userProperties.getProperty('tFont'));
   var pow = table.findText('powers');
   pow.getElement().asText().setBold(0,5,true);
   var description = table.findText('description').getElement().asText().setItalic(0,10,true).setBold(false);
-  var cell2 = table.getCell(0,1);
-  cell2.setBackgroundColor('#dddddd');
+  var cell02 = table.getCell(0,1);
+  cell02.setBackgroundColor('#dddddd');
   
   if(isPrt == true){
     cell1.setBackgroundColor('#efefef');
@@ -403,8 +422,8 @@ function addPers(isPrt){
     cell1.setBackgroundColor(userProperties.getProperty('color'));
   }
 }
-//-- nHFont, hTFont, colorType, city, month --//
-function changeThings(a,b,c,d,e){
+//-- nHFont, hTFont, colorType, city, month, year, area --//
+function changeThings(a,b,c,d,e,f,g){
   if(a!=''){
     userProperties.setProperty('hFont', a);
   }
@@ -420,6 +439,13 @@ function changeThings(a,b,c,d,e){
   if(e!=''){
     userProperties.setProperty('month', e);
   }
+  if(f!=''){
+    userProperties.setProperty('year', f);
+  }
+  if(g!=''){
+    userProperties.setProperty('area', g);
+  }
+  
 }
 //-- Menu-specific Functions --//
 function addSection(){
