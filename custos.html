@@ -1,10 +1,55 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
     <base target="_top">
   </head>
+<style>
+  body{
+  padding:5px;
+  }
+</style>
   <body>
-    
+    <form onsubmit="changeInfo()" action="javascript:void(0);">
+      <p>This sidebar has several places you can change or update your settings.</p>      
+        <small>This will only affect future uses of the generator, be aware.</small>
+      <hr>
+      <div>
+        <h3>Fonts</h3>
+        <div><label>Header Font</label><br/>
+        <input type='text' id='headerFont'>
+        </div>
+        <div><label>Text Font</label><br/>
+        <input type='text' id='textFont'>
+        </div>
+        <hr>
+        <h3>Color Info</h3>
+        <div><label>Color of group. Please input hexadecimal and add a '#'</label><br/>
+        <input type='text' id='colorCode'>
+        </div>
+        <hr>
+        <h3>Campaign Info</h3>
+        <div><label>City</label><br/>
+        <input type='text' id='city'>
+        </div>
+        <div><label>Month</label><br/>
+        <input type='text' id='month'>
+        </div>
+        <hr>       
+        <input type='submit' value='Submit'>
+      </div>
+    </form>
+    <script>
+      function changeInfo(){
+        var nHFont = document.getElementById("headerFont").value;
+        var hTFont = document.getElementById("textFont").value;
+        var colorType = document.getElementById("colorCode").value;
+        var city = document.getElementById("city").value;
+        var month = document.getElementById("month").value;
+        
+        google.script.run.changeThings(nHFont,hTFont,colorType,city,month);
+      }
+    </script>
   </body>
 </html>
 

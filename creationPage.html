@@ -48,20 +48,22 @@
       <div><label>Month/Year</label><br/><input type='text' name='monthField' id='monthField' size='4'>/
       <input type='text' name='yearField' id='yearField' size='4'>
       </div>
-      
+      <hr>
       <div><label>Heading Font</label><input type='select' name='headingFont' id='headingFont'></div>
       <div><label>Text Font</label><br/><input type='select' name='textFont' id='textFont'></div>
-      
+      <hr>
       <div><label>Current players</label><input type='number' id='playersCurrent' class='players'></div>
       <div><label>Queued/Lottery players</label><input type='number' id='playersQueued'class='players'></div>
-      <div><label>Picture</label><br/><small>Is there a picture you would like to use? Please link that below.</small><br/><br/>
-      <input type='text' id='image' width='35'></div>
+      <hr>
+      <div><label>Picture</label><br/><small>Is there a picture you would like to use? Please link that below.</small><br/>
+      <input type='text' id='image' width='40'></div>
       
       <div><label>City event summary</label>
         <br>
         <br>
-        <textarea id='cityEvent'rows='15' cols='35'></textarea>
+        <textarea id='cityEvent'rows='15' cols='33'></textarea>
       </div>
+      <hr>
       <div><input type="submit" value="Submit"></div>
     </div>
     </form>
@@ -78,8 +80,10 @@
       var cityEvent = document.getElementById("cityEvent").value;
       var photo = document.getElementById("image").value;
       var stCo = document.getElementById("areaField").value;
-      
-      google.script.run.generate(city, realCity, year, month, heading, text, currPlayers, quePlayers, cityEvent, photo, stCo);
+      if(currPlayers<0||quePlayers<0){
+        alert("The number of players is negative.");
+      }else      
+        google.script.run.generate(city, realCity, year, month, heading, text, currPlayers, quePlayers, cityEvent, photo, stCo);
      }
    </script>
   </body>

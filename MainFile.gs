@@ -5,6 +5,7 @@ userProperties.setProperty('tFont', 'Calibri');
 userProperties.setProperty('city', 'None input.');
 userProperties.setProperty('month','January');
 userProperties.setProperty('year','2009');
+userProperties.setProperty('color','#28754E');
 
 function onInstall(e){
     onOpen(e)
@@ -40,7 +41,7 @@ var url;
   headingFont = userProperties.getProperty('hFont');
   textFont = userProperties.getProperty('tFont');
   }
-  if(j!=''){
+  if(j!=''||j.includes('.jpg')||j.includes('.png')||j.includes('.gif')){
     url = j;
   } else{
     url = "http://www.psdgraphics.com/file/city-skyline-silhouette.jpg";
@@ -48,10 +49,17 @@ var url;
   userProperties.setProperty('city', a);
   userProperties.setProperty('month',c);
   userProperties.setProperty('year', b);
-
-  var docBody = createDoc(a, 'main').getBody();
-  var docWhere = createDoc(a, 'where').getBody();
-  var docSess = createDoc(a, 'sessions').getBody();
+  
+  var docB = createDoc(a, 'main');
+  var docBody = docB.getBody();
+  var docBUrl = docB.getUrl();
+  var docW = createDoc(a, 'where');
+  var docWhere = docW.getBody();
+  var docWUrl = docW.getUrl();
+  var docS = createDoc(a, 'sessions');
+  var docSess = docS.getBody();
+  var docSUrl = docS.getBody();
+  
   docBody.setMarginLeft(40).setMarginRight(40);
   docWhere.setMarginLeft(40).setMarginRight(40);
   docSess.setMarginLeft(40).setMarginRight(40);
@@ -67,7 +75,7 @@ var url;
   
   var wikiInsert = docWhere.insertParagraph(2,"Welcome to the Parahumans Online wiki for "+a+", "+ k +
   ", and its surroundings. Please contact the local moderation team if you'd like to contribute. "+
-  "You'll requre a verified PHO account in the "+ k +" subforum, and edits you make to the wiki will need to "+
+  "You'll require a verified PHO account in the "+ k +" subforum, and edits you make to the wiki will need to "+
   "be approved by a moderator until you've made enough valid contributions.");
   wikiInsert.editAsText().setFontFamily(textFont);
   
@@ -119,12 +127,12 @@ var url;
   var know = 'Know Where You Live';
   var know2 = 'Publically available and editable knowledge regarding the capes of '+a+'. Not guaranteed to be accurate.';
   var knows = docBody.insertParagraph(5,know+'\n'+know2+'\n');
-  var knowLink = knows.findText(know).getElement().asText().setLinkUrl(0, know.length, docWhere.getLinkUrl());
+  var knowLink = knows.findText(know).getElement().asText().setLinkUrl(0, know.length, docWUrl);
   
   var sesshLog = 'Session Logs';
   var sesshLog2 = 'The story thus far. All information in logs not marked as public information are to be treated as meta-knowledge.';
   var logs = docBody.insertParagraph(6,sesshLog+'\n'+sesshLog2);
-  var logsLink = logs.findText(sesshLog).getElement().asText().setLinkUrl(0, sesshLog.length, docSess.getLinkUrl());
+  var logsLink = logs.findText(sesshLog).getElement().asText().setLinkUrl(0, sesshLog.length, docSUrl);
   
   addGeneratedSection('Players','Those currently in the fray', docBody,7);
   var current = docBody.insertParagraph(8,'Current').setHeading(DocumentApp.ParagraphHeading.HEADING4);
@@ -145,6 +153,11 @@ var url;
           td.setAttributes(headerStyle);
           switch(k){
             case 0:
+              td.setText('Player');
+              break;
+            case 1:
+              td.setText('Character');
+              break;
             case 2:
               td.setText('Fealty');
               break;
@@ -246,34 +259,38 @@ cell2.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CEN
 cell2.editAsText().setBold(0,5,true).setItalic(false);
 
 var sessionLog = createDoc(userProperties.getProperty('city'),'session');
-var returnedLog = createSession(sessionLog);
-
-//cell1.setLinkUrl();
-//cell2.setLinkUrl();
+var sessionLogUrl = sessionLog.getUrl();
+var returnedLog;
+cell.getChild(0).asText().setLinkUrl(0, 5, sessionLogUrl);
+cell2.getChild(0).asText().setLinkUrl(0, 5, sessionLogUrl);
 
   switch(typeOfLog)
   {
     case "sec":
       cell.setBackgroundColor('#434343');
       cell2.setBackgroundColor('#434343');
+      returnedLog = createSession(sessionLog,false);
       break;
     case "pub":
       cell.setBackgroundColor('#fff2cc');
       cell2.setBackgroundColor('#fff2cc');
+      returnedLog = createSession(sessionLog,false);
       break;
     case "pho":
       cell.setBackgroundColor('#cfe2f3');
       cell2.setBackgroundColor('#cfe2f3');
+      returnedLog = createSession(sessionLog,true);
       break;
     default:
       cell.setBackgroundColor('#dddddd');
       cell2.setBackgroundColor('#dddddd');
-      
+      returnedLog = createSession(sessionLog,false);
   }
 }
 
-function createSession(session){
+function createSession(session, isThread){
   var sessBody = session.getBody();
+  if(isThread == false){
   var heading = sessBody.insertParagraph(0,'#WD'+userProperties.getProperty('city')+' - x.x');
   heading.setHeading(DocumentApp.ParagraphHeading.HEADING2);
   heading.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
@@ -300,6 +317,22 @@ function createSession(session){
   var cell2 = navRow.getCell(1).getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER);
   var cell3 = navRow.getCell(2).getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.RIGHT);
   sessBody.insertHorizontalRule(5);
+  } else {
+    sessBody.editAsText().setBackgroundColor('#073763').setFontFamily(userProperties.getProperty('tFont')).setForegroundColor('#ffffff').setBold(true);
+    sessBody.insertParagraph(0,"►Topic: Insert name").setIndentFirstLine(30);
+    sessBody.insertParagraph(1,"In: Boards ► Places ► America ► "+userProperties.getProperty('area')+" ► "+userProperties.getProperty('city')).setIndentFirstLine(30);
+   
+    var cells = [['','']]
+    var table = sessBody.appendTable(cells);
+   
+    var cellTable1 = table.getCell(0, 0);
+    cellTable1.setWidth(100).setBackgroundColor('#a4c2f4');
+    cellTable1.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER).setForegroundColor('#000000').setBold(false);
+    
+    var cellTable2 = table.getCell(0, 1);
+    cellTable2.setWidth(400).setBackgroundColor('#cfe2f3');
+    cellTable2.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.RIGHT).setForegroundColor('#000000').setBold(false).setItalic(true);
+    }
 }
 
 function addPubE(){
@@ -351,7 +384,25 @@ function addPers(isPrt){
   if(isPrt == true){
     cell1.setBackgroundColor('#efefef');
   } else {
-    cell1.setBackgroundColor('#28754E');
+    cell1.setBackgroundColor(userProperties.getProperty('color'));
+  }
+}
+//-- nHFont, hTFont, colorType, city, month --//
+function changeThings(a,b,c,d,e){
+  if(a!=''){
+    userProperties.setProperty('hFont', a);
+  }
+  if(b!=''){
+    userProperties.setProperty('tFont', b);
+  }
+  if(c!=''){
+    userProperties.setProperty('color', c);
+  }
+  if(d!=''){
+    userProperties.setProperty('city', d);
+  }
+  if(e!=''){
+    userProperties.setProperty('month', e);
   }
 }
 //-- Menu-specific Functions --//
