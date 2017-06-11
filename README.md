@@ -2,6 +2,10 @@
 Exactly what it says on the tin. A template generator for a homebrewed RPG set in the wormverse.
 
 Due to the limited functionality of Google Apps Script as well as my own inexperience, there are several things that the user should do following the campaign generation.
+![ScreenShot](Pics/gApps1.png)
+![ScreenShot](Pics/gApps2.png)
+![ScreenShot](Pics/gApps3.png)
+![ScreenShot](Pics/gApps4.png)
 
 # Features:
 * Create and insert sections anywhere with your custom heading/text font.
@@ -28,13 +32,20 @@ Due to the limited functionality of Google Apps Script as well as my own inexper
 
 # POTENTIAL ISSUES/FAQ
 Q: I already have a campaign but I'd like to use this addon for it.
+
 A: Use the customizations tab. You can still create your own logs and sections for it.
 
+
 Q: The fonts aren't working!
+
 A: The fonts have to be capitalized and available in Google Fonts. Otherwise it will default to the current Google Docs font.
 
+
 Q: Some of the entries are italic/bold/colored differently?
+
 A: Your Google Docs pointer might be the cause. Make sure it is a new document that you run the Addon in, or that it is not bolded, a different color, or italicized.
 
+
 Q: It's only Weaverdice?
+
 A: Further updates to this addon will allow you to create more generic GM info docs or Pact Dice docs. 
