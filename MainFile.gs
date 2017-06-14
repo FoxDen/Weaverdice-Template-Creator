@@ -156,7 +156,7 @@ var url;
   var table = docBody.insertTable(9);
     for(var i = 0;i<=g;i++){
       var tr = table.appendTableRow()
-      for(var k = 0; k<4;k++){
+      for(var k = 0; k<5;k++){
         var td = tr.appendTableCell('');
         var para = td.getChild(0).asParagraph();
         para.setAttributes(paraStyle);
@@ -175,6 +175,9 @@ var url;
             case 3:
               td.setText('Notes');
               break;
+            case 4:
+              td.setText('');
+              td.setWidth(5);
             default:
               break;
           }
@@ -316,7 +319,6 @@ cell2.getChild(0).asText().setLinkUrl(0, 5, sessionLogUrl);
 
 function createSession(session, isThread){
   var sessBody = session.getBody();
-  sessBody.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   if(isThread == false){
   var heading = sessBody.insertParagraph(0,'#WD'+userProperties.getProperty('city')+' - x.x');
   heading.setHeading(DocumentApp.ParagraphHeading.HEADING2);
@@ -336,13 +338,19 @@ function createSession(session, isThread){
   row.getCell(0).setBackgroundColor('#cccccc').editAsText().setLinkUrl(0,tellerUrl.length-1,tellerUrl);
   
   sessBody.insertHorizontalRule(3);
-  var cells = [['← Previous',userProperties.getProperty('month')+', [Day], '+userProperties.getProperty('year'), 'Next →']];
+  var cells = [['← Previous',userProperties.getProperty('month')+' [Day], '+userProperties.getProperty('year'), 'Next →']];
   var navTable = sessBody.insertTable(4,cells).setBorderWidth(0);
   var navRow = navTable.getRow(0);
   var cell1 = navRow.getCell(0);
   var cell2 = navRow.getCell(1).getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER);
   var cell3 = navRow.getCell(2).getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.RIGHT);
   sessBody.insertHorizontalRule(5);
+  sessBody.insertHorizontalRule(6);
+  var sessTable = sessBody.insertTable(7).setBorderWidth(0).appendTableRow().appendTableCell('Sessions');
+  var sess = sessTable.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+  
+  sessBody.insertHorizontalRule(8);  
+  sessBody.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   } else {
     sessBody.editAsText().setBackgroundColor('#073763').setFontFamily(userProperties.getProperty('tFont')).setForegroundColor('#ffffff').setBold(true);
     sessBody.insertParagraph(0,"► Topic: Insert name").setIndentFirstLine(30);
@@ -373,12 +381,11 @@ function addPubE(){
 }
 
 function addGrp(){
-  body.editAsText();
   var grp = body.appendParagraph('Group');
-  grp.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   grp.setHeading(DocumentApp.ParagraphHeading.HEADING2);
+  grp.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   var info = body.appendParagraph('Information about said group here.');
-  info.editAsText().setItalic(0,32,true).setFontFamily(userProperties.getProperty('tFont'));;
+  info.editAsText().setItalic(0,32,true).setFontFamily(userProperties.getProperty('tFont'));
   
   addPers(false);  
 }
