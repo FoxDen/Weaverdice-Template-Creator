@@ -48,8 +48,9 @@
         <div><label>Area</label><br/>
         <input type='text' id='area'>
         </div>
-        <div><label>Month/Year</label><br/>
+        <div><label>Month/Day/Year</label><br/>
         <input type='text' id='month' size='4'>/
+        <input type='text' id='day' size='2' maxlength='2'>/
         <input type='text' id='year' size='4' maxlength='4'>
         </div>
         <hr>       
@@ -64,12 +65,13 @@
         var city = document.getElementById("city").value;
         var area = document.getElementById("area").value;
         var month = document.getElementById("month").value;
+        var day = document.getElementById("day").value;
         var year = document.getElementById("year").value;
         
         if(colorType.length>0&&!colorType.includes('#')){
           alert("Please make sure to use hexcodes only.");
         }else{
-          google.script.run.changeThings(nHFont,hTFont,colorType,city,month,year,area);
+          google.script.run.changeThings(nHFont,hTFont,colorType,city,month,day,year,area);
           alert("Completed!");
         }
       }

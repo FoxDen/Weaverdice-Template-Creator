@@ -8,6 +8,7 @@ function onInstall(e){
     userProperties.setProperty('tFont', 'Arial');
     userProperties.setProperty('city', 'Default');
     userProperties.setProperty('month','January');
+    userProperties.setProperty('day','01');
     userProperties.setProperty('year','2009');
     userProperties.setProperty('area','USA');
     userProperties.setProperty('color','#ffffff');
@@ -25,7 +26,9 @@ function onOpen(e){
                 .addItem('Add Secret Log','sec')
                 .addItem('Add Public Log','pub')
                 .addItem('Add Public Event','addPubE')
-                .addItem('Add PHO Thread','pho'))
+                .addItem('Add PHO Thread','pho')
+                .addSeparator()
+                .addItem('New Date','date'))
     .addSubMenu(DocumentApp.getUi().createMenu('Important Docs/Know Where You Live')
                 .addItem('Add Group','addGrp')
                 .addItem('Add PRT','addPRT')
@@ -177,7 +180,7 @@ var url;
               break;
             case 4:
               td.setText('');
-              td.setWidth(5);
+              td.setWidth(15);
             default:
               break;
           }
@@ -254,6 +257,7 @@ return document;
 }
 
 function addGeneratedSection(section, subtitle, doc, position){  
+  var se;
   var cell = [
    [section+'\n'+subtitle]
    ];
@@ -338,7 +342,7 @@ function createSession(session, isThread){
   row.getCell(0).setBackgroundColor('#cccccc').editAsText().setLinkUrl(0,tellerUrl.length-1,tellerUrl);
   
   sessBody.insertHorizontalRule(3);
-  var cells = [['← Previous',userProperties.getProperty('month')+' [Day], '+userProperties.getProperty('year'), 'Next →']];
+  var cells = [['← Previous',userProperties.getProperty('month')+' '+userProperties.getProperty('day')+', '+userProperties.getProperty('year'), 'Next →']];
   var navTable = sessBody.insertTable(4,cells).setBorderWidth(0);
   var navRow = navTable.getRow(0);
   var cell1 = navRow.getCell(0);
@@ -429,8 +433,8 @@ function addPers(isPrt){
     cell1.setBackgroundColor(userProperties.getProperty('color'));
   }
 }
-//-- nHFont, hTFont, colorType, city, month, year, area --//
-function changeThings(a,b,c,d,e,f,g){
+//-- nHFont,hTFont,colorType,city,month,day,year,area --//
+function changeThings(a,b,c,d,e,f,g,h){
   if(a!=''){
     userProperties.setProperty('hFont', a);
   }
@@ -447,9 +451,12 @@ function changeThings(a,b,c,d,e,f,g){
     userProperties.setProperty('month', e);
   }
   if(f!=''){
-    userProperties.setProperty('year', f);
+    userProperties.setProperty('day', f);
   }
   if(g!=''){
+    userProperties.setProperty('year', g);
+  }
+  if(h!=''){
     userProperties.setProperty('area', g);
   }
   
@@ -472,6 +479,14 @@ function pho(){
 }
 function norm(){
   addLog('norm');
+}
+function date(){
+  var date = body.appendParagraph(
+    userProperties.getProperty('month')+' '+
+    userProperties.getProperty('day')+', '+
+    userProperties.getProperty('year'));
+  var dateText = date.editAsText();
+  dateText.setBold(0,dateText.getText().length-1,true).setFontFamily(userProperties.getProperty('tFont'));
 }
 //-- End menu functions --//
 //-- Menu sidebars --//
