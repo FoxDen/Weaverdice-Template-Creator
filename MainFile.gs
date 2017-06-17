@@ -1,13 +1,11 @@
 /**
 @NotOnlyCurrentDoc
 */
-var body = DocumentApp.getActiveDocument().getBody();
-var currFile = DocumentApp.getActiveDocument().getId();
-var thisFile = DriveApp.getFileById(currFile);
-var parentFolder = thisFile.getParents().next().getId();
-var userProperties = PropertiesService.getUserProperties();
+
 function onInstall(e){
     onOpen(e);
+    
+    var userProperties = PropertiesService.getUserProperties();
     userProperties.setProperty('hFont', 'Arial');
     userProperties.setProperty('tFont', 'Arial');
     userProperties.setProperty('city', 'Default');
@@ -46,12 +44,11 @@ function onOpen(e){
 
 //city, realCity, year, month, headingF, textF, currPlayers, quePlayers, cityEvent, image, area.
 function generate(a,b,c,d,e,f,g,h,i,j,k){
-var url;
+  var body = DocumentApp.getActiveDocument().getBody();
+  var userProperties = PropertiesService.getUserProperties();
   if(e!=''&&f!=''){
   userProperties.setProperty('hFont', e);
   userProperties.setProperty('tFont', f);
-  headingFont = userProperties.getProperty('hFont');
-  textFont = userProperties.getProperty('tFont');
   }
   
   if(j!=''){
@@ -60,8 +57,8 @@ var url;
     url = "http://www.psdgraphics.com/file/city-skyline-silhouette.jpg";
   }
   userProperties.setProperty('city', a);
-  userProperties.setProperty('month',c);
-  userProperties.setProperty('year', b);
+  userProperties.setProperty('month',d);
+  userProperties.setProperty('year', c);
   userProperties.setProperty('area', k);
   
   var docB = createDoc(a, 'main');
@@ -76,37 +73,45 @@ var url;
   var docSess = docS.getBody();
   var docSUrl = docS.getUrl();
   var docSID = docS.getId();
-    
+  
   docBody.setMarginLeft(40).setMarginRight(40);
   docWhere.setMarginLeft(40).setMarginRight(40);
   docSess.setMarginLeft(40).setMarginRight(40);
+  
+   
+  //-- Files and Folders --//
+  var currFile = DocumentApp.getActiveDocument().getId();
+  var thisFile = DriveApp.getFileById(currFile);
+  var parentFolder = thisFile.getParents().next().getId();
   
   DriveApp.getFolderById(parentFolder).addFile(DriveApp.getFileById(docBID));
   DriveApp.getFolderById(parentFolder).addFile(DriveApp.getFileById(docWID));
   DriveApp.getFolderById(parentFolder).addFile(DriveApp.getFileById(docSID));
  
+  
   //-- Create 'Where you Live' doc --//
-  docWhere.editAsText().setFontFamily(textFont);
+  
+  docWhere.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   var heading = docWhere.insertParagraph(0,'Parahumans Online');
   heading.setHeading(DocumentApp.ParagraphHeading.HEADING1);
   var subheading = docWhere.insertParagraph(1,'Know where you live: '+a);
   subheading.setHeading(DocumentApp.ParagraphHeading.SUBTITLE);
-  heading.editAsText().setBold(true).setFontFamily(headingFont);
-  subheading.editAsText().setBold(false).setFontFamily(textFont);
-  
+  heading.editAsText().setBold(true).setFontFamily(userProperties.getProperty('hFont'));
+  subheading.editAsText().setBold(false).setFontFamily(userProperties.getProperty('tFont'));
+
   var wikiInsert = docWhere.insertParagraph(2,"Welcome to the Parahumans Online wiki for "+a+", "+ k +
   ", and its surroundings. Please contact the local moderation team if you'd like to contribute. "+
   "You'll require a verified PHO account in the "+ k +" subforum, and edits you make to the wiki will need to "+
   "be approved by a moderator until you've made enough valid contributions.");
   
   var modStaff = docWhere.appendParagraph('Wiki Moderation Staff:\n');
-  modStaff.editAsText().setBold(0,21,true).setFontFamily(textFont);
+  modStaff.editAsText().setBold(0,21,true).setFontFamily(userProperties.getProperty('tFont'));
   
-  addGeneratedSection('Groups','Know where you live. Only publicly available information, '+
+   addGeneratedSection('Groups','Know where you live. Only publicly available information, '+
   'not guaranteed to be accurate.',docWhere,5);
-  
-   //-- Create 'Sessions Log' doc --//
-  docSess.editAsText().setFontFamily(textFont);
+
+ //-- Create 'Sessions Log' doc --//
+  docSess.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   addGeneratedSection('Timeline','The story so far. All information in logs not marked as public information '+
   'are to be treated as meta-knowledge.',docSess,0);
   docSess.appendParagraph('Key').editAsText().setBold(0,2,true);
@@ -125,10 +130,10 @@ var url;
   tableCell.setVerticalAlignment(DocumentApp.VerticalAlignment.CENTER);
   tableCell.setWidth(50);
   
-  var arc = docSess.appendParagraph('\n'+arc1);
+  var arc = docSess.appendParagraph('\n'+arc1); 
   
-  //-- Create 'Main Player Info' doc --//
-  docBody.editAsText().setFontFamily(textFont);
+   //-- Create 'Main Player Info' doc --//
+  docBody.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   var imageInsert = UrlFetchApp.fetch(url);
   docBody.insertImage(0, imageInsert).setHeight(200).setWidth(708);
   var date = docBody.insertParagraph(1,d+' '+c);
@@ -160,11 +165,11 @@ var url;
   headerStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#ffffff';
   headerStyle[DocumentApp.Attribute.BOLD] = true;
   headerStyle[DocumentApp.Attribute.ITALIC] = false;
-  headerStyle[DocumentApp.Attribute.FONT_FAMILY] = headingFont;
+  headerStyle[DocumentApp.Attribute.FONT_FAMILY] = userProperties.getProperty('hFont');
   var cellStyle = {};
   cellStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#000000';
   cellStyle[DocumentApp.Attribute.BOLD] = false;
-  cellStyle[DocumentApp.Attribute.FONT_FAMILY] = textFont;
+  cellStyle[DocumentApp.Attribute.FONT_FAMILY] = userProperties.getProperty('tFont');
   var paraStyle = {};
   paraStyle[DocumentApp.Attribute.SPACING_AFTER] = 0;
   paraStyle[DocumentApp.Attribute.LINE_SPACING] = .5;
@@ -236,9 +241,11 @@ var url;
     }
   }
  
+
 }
 
 function createKey(borderColor, secondCellTextB, secondCellTextR,secondCellTextI,backgroundColor, innerTable, docBody){
+  var userProperties = PropertiesService.getUserProperties();
   var endingLength = secondCellTextB.length+secondCellTextR.length+secondCellTextI.length;
   innerTable = docBody.appendTable().setBorderColor(borderColor).appendTableRow();
   innerTable.appendTableCell(['']);
@@ -269,6 +276,7 @@ return document;
 }
 
 function addGeneratedSection(section, subtitle, doc, position){  
+  var userProperties = PropertiesService.getUserProperties();
   var se;
   var cell = [
    [section+'\n'+subtitle]
@@ -287,6 +295,8 @@ function addGeneratedSection(section, subtitle, doc, position){
 }
 
 function addLog(typeOfLog){
+var userProperties = PropertiesService.getUserProperties();
+var body = DocumentApp.getActiveDocument().getBody();
 body.editAsText().setFontFamily(userProperties.getProperty('tFont'));
 var myTable = [['merge!', 'summary'],['merge!','players']];
 var newTable = body.appendTable(myTable).setBorderColor('#434343');
@@ -304,7 +314,12 @@ cell2.editAsText().setBold(0,5,true).setItalic(false);
 var sessionLog = createDoc(userProperties.getProperty('city'),'session');
 var sessionLogId = sessionLog.getId();
 var sessionLogUrl = sessionLog.getUrl();
-DriveApp.getFolderById(parentFolder).addFile(DriveApp.getFileById(sessionLogId));
+
+  var currFile = DocumentApp.getActiveDocument().getId();
+  var thisFile = DriveApp.getFileById(currFile);
+  var parentFolder = thisFile.getParents().next().getId();
+  DriveApp.getFolderById(parentFolder).addFile(DriveApp.getFileById(sessionLogId));
+  
 var returnedLog;
 cell.getChild(0).asText().setLinkUrl(0, 5, sessionLogUrl);
 cell2.getChild(0).asText().setLinkUrl(0, 5, sessionLogUrl);
@@ -336,6 +351,7 @@ cell2.getChild(0).asText().setLinkUrl(0, 5, sessionLogUrl);
 }
 
 function createSession(session, isThread){
+  var userProperties = PropertiesService.getUserProperties();
   var sessBody = session.getBody();
   if(isThread == false){
   var heading = sessBody.insertParagraph(0,'#WD'+userProperties.getProperty('city')+' - x.x');
@@ -387,7 +403,9 @@ function createSession(session, isThread){
   
 }
 
-function addPubE(){
+function addPubE(){  
+  var userProperties = PropertiesService.getUserProperties();
+  var body = DocumentApp.getActiveDocument().getBody();
   var cell = [
    ['🛈' + '   \t News']
    ];
@@ -399,6 +417,8 @@ function addPubE(){
 }
 
 function addGrp(){
+  var userProperties = PropertiesService.getUserProperties();
+  var body = DocumentApp.getActiveDocument().getBody();
   var grp = body.appendParagraph('Group');
   grp.setHeading(DocumentApp.ParagraphHeading.HEADING2);
   grp.editAsText().setFontFamily(userProperties.getProperty('tFont'));
@@ -409,6 +429,8 @@ function addGrp(){
 }
 
 function addPRT(){
+  var userProperties = PropertiesService.getUserProperties();
+  var body = DocumentApp.getActiveDocument().getBody();
   var prtHead = body.appendParagraph('PRT Dept -- : Leadership').setHeading(DocumentApp.ParagraphHeading.HEADING2);
   prtHead.editAsText().setFontFamily(userProperties.getProperty('tFont'));
   addPers(true);
@@ -421,6 +443,8 @@ function addPRT(){
 }
 
 function addPers(isPrt){
+  var userProperties = PropertiesService.getUserProperties();
+  var body = DocumentApp.getActiveDocument().getBody();
   var cell = [['name','powers\ndescription'],['','information about them as a person']];
   var table = body.appendTable(cell);
   var cell1 = table.getCell(0,0);
@@ -449,6 +473,7 @@ function addPers(isPrt){
 }
 //-- nHFont,hTFont,colorType,city,month,day,year,area --//
 function changeThings(a,b,c,d,e,f,g,h){
+  var userProperties = PropertiesService.getUserProperties();
   if(a!=''){
     userProperties.setProperty('hFont', a);
   }
@@ -477,6 +502,8 @@ function changeThings(a,b,c,d,e,f,g,h){
 }
 //-- Menu-specific Functions --//
 function addSection(){
+  var userProperties = PropertiesService.getUserProperties();
+  var body = DocumentApp.getActiveDocument().getBody();
   addGeneratedSection("section","subtitle",body,-1)
 }
 function pers(){
@@ -495,6 +522,8 @@ function norm(){
   addLog('norm');
 }
 function date(){
+  var userProperties = PropertiesService.getUserProperties();
+  var body = DocumentApp.getActiveDocument().getBody();
   var date = body.appendParagraph(
     userProperties.getProperty('month')+' '+
     userProperties.getProperty('day')+', '+
@@ -527,3 +556,4 @@ function createCampaignDoc(){
   DocumentApp.getUi()
      .showSidebar(html);
 }
+
