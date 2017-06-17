@@ -1,7 +1,11 @@
+/**
+@NotOnlyCurrentDoc
+*/
 var body = DocumentApp.getActiveDocument().getBody();
+var currFile = DocumentApp.getActiveDocument().getId();
+var thisFile = DriveApp.getFileById(currFile);
+var parentFolder = thisFile.getParents().next().getId();
 var userProperties = PropertiesService.getUserProperties();
-
-
 function onInstall(e){
     onOpen(e);
     userProperties.setProperty('hFont', 'Arial');
@@ -17,7 +21,8 @@ function onInstall(e){
 }
 
 function onOpen(e){
-  DocumentApp.getUi().createAddonMenu()
+  var ui = DocumentApp.getUi();
+  ui.createAddonMenu()
     .addItem('Create Campaign Doc','createCampaignDoc')
     .addSubMenu(DocumentApp.getUi().createMenu('Main Page')
                 .addItem('Add Section','addSection'))
@@ -62,16 +67,23 @@ var url;
   var docB = createDoc(a, 'main');
   var docBody = docB.getBody();
   var docBUrl = docB.getUrl();
+  var docBID = docB.getId();
   var docW = createDoc(a, 'where');
   var docWhere = docW.getBody();
   var docWUrl = docW.getUrl();
+  var docWID = docW.getId();
   var docS = createDoc(a, 'sessions');
   var docSess = docS.getBody();
   var docSUrl = docS.getUrl();
+  var docSID = docS.getId();
     
   docBody.setMarginLeft(40).setMarginRight(40);
   docWhere.setMarginLeft(40).setMarginRight(40);
   docSess.setMarginLeft(40).setMarginRight(40);
+  
+  DriveApp.getFolderById(parentFolder).addFile(DriveApp.getFileById(docBID));
+  DriveApp.getFolderById(parentFolder).addFile(DriveApp.getFileById(docWID));
+  DriveApp.getFolderById(parentFolder).addFile(DriveApp.getFileById(docSID));
  
   //-- Create 'Where you Live' doc --//
   docWhere.editAsText().setFontFamily(textFont);
@@ -290,7 +302,9 @@ cell2.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CEN
 cell2.editAsText().setBold(0,5,true).setItalic(false);
 
 var sessionLog = createDoc(userProperties.getProperty('city'),'session');
+var sessionLogId = sessionLog.getId();
 var sessionLogUrl = sessionLog.getUrl();
+DriveApp.getFolderById(parentFolder).addFile(DriveApp.getFileById(sessionLogId));
 var returnedLog;
 cell.getChild(0).asText().setLinkUrl(0, 5, sessionLogUrl);
 cell2.getChild(0).asText().setLinkUrl(0, 5, sessionLogUrl);
