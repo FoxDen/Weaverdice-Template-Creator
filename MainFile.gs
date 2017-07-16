@@ -153,16 +153,20 @@ function generate(a,b,c,d,e,f,g,h,i,j,k){
   var knows = docBody.insertParagraph(5,know+'\n'+know2+'\n');
   var knowLink = knows.findText(know).getElement().asText().setLinkUrl(0, know.length, docWUrl);
   
+  var pho = a+' PHO Subforum';
+  var pho2 = 'A place for players and spectators to post and discuss events within the city.';
+  var phos = docBody.insertParagraph(6,pho+'\n'+pho2+'\n');
+  
   var sesshLog = 'Session Logs';
   var sesshLog2 = 'The story thus far. All information in logs not marked as public information are to be treated as meta-knowledge.';
-  var logs = docBody.insertParagraph(6,sesshLog+'\n'+sesshLog2);
+  var logs = docBody.insertParagraph(7,sesshLog+'\n'+sesshLog2);
   var logsLink = logs.findText(sesshLog).getElement().asText().setLinkUrl(0, sesshLog.length, docSUrl);
   
-  addGeneratedSection('Players','Those currently in the fray', docBody,7);
-  var current = docBody.insertParagraph(8,'Current').setHeading(DocumentApp.ParagraphHeading.HEADING4);
+  addGeneratedSection('Players','Those currently in the fray', docBody,8);
+  var current = docBody.insertParagraph(9,'Current').setHeading(DocumentApp.ParagraphHeading.HEADING4);
   var headerStyle = {};
   headerStyle[DocumentApp.Attribute.BACKGROUND_COLOR] = '#000000';
-  headerStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#ffffff';
+  headerStyle[DocumentApp.Attribute.FOREGROUND_COLOR] = '#ffffff';  
   headerStyle[DocumentApp.Attribute.BOLD] = true;
   headerStyle[DocumentApp.Attribute.ITALIC] = false;
   headerStyle[DocumentApp.Attribute.FONT_FAMILY] = userProperties.getProperty('hFont');
@@ -173,9 +177,10 @@ function generate(a,b,c,d,e,f,g,h,i,j,k){
   var paraStyle = {};
   paraStyle[DocumentApp.Attribute.SPACING_AFTER] = 0;
   paraStyle[DocumentApp.Attribute.LINE_SPACING] = .5;
-  var table = docBody.insertTable(9);
+  var table = docBody.insertTable(10);
+  table.setBorderColor('#666666');
     for(var i = 0;i<=g;i++){
-      var tr = table.appendTableRow()
+      var tr = table.appendTableRow();
       for(var k = 0; k<5;k++){
         var td = tr.appendTableCell('');
         var para = td.getChild(0).asParagraph();
@@ -196,7 +201,7 @@ function generate(a,b,c,d,e,f,g,h,i,j,k){
               td.setText('Notes');
               break;
             case 4:
-              td.setText('');
+              td.setText('✓');
               td.setWidth(15);
             default:
               break;
@@ -206,17 +211,19 @@ function generate(a,b,c,d,e,f,g,h,i,j,k){
          }
       }
     }  
-  var dead = docBody.insertParagraph(10,'Dead and Gone').setHeading(DocumentApp.ParagraphHeading.HEADING4);
+  var dead = docBody.insertParagraph(11,'Dead and Gone').setHeading(DocumentApp.ParagraphHeading.HEADING4);
   var deadCells = [['Player', 'Character','Status','Notes']];
-  var deadTable = docBody.insertTable(11, deadCells);
+  var deadTable = docBody.insertTable(12, deadCells);
+  deadTable.setBorderColor('#666666');
   for(var i = 0;i<4;i++){
     var td = deadTable.getCell(0,i);
     td.setAttributes(headerStyle);
     td.getChild(0).asParagraph().setAttributes(paraStyle);
   }
 
-  addGeneratedSection('Queue','Those eager to join the fray', docBody,12);
-  var queue = docBody.insertTable(13);
+  addGeneratedSection('Queue','Those eager to join the fray', docBody,13);
+  var queue = docBody.insertTable(14);
+  queue.setBorderColor('#666666');
   for(var i = 0;i<=h;i++){
     var tr = queue.appendTableRow()
     for(var k = 0; k<2;k++){
@@ -277,77 +284,100 @@ return document;
 
 function addGeneratedSection(section, subtitle, doc, position){  
   var userProperties = PropertiesService.getUserProperties();
-  var se;
+  var cursor = DocumentApp.getActiveDocument().getCursor();
+  var element = cursor.getElement();
+  var parent = element.getParent();
   var cell = [
    [section+'\n'+subtitle]
    ];
   var table;
   if(position==-1){
-    table = doc.appendTable(cell);
+   if(cursor){
+    if(element){
+      table = doc.insertTable(parent.getChildIndex(element)+1, cell).setBorderColor('#434343');
+    } else{
+      DocumentApp.getUi().alert("Element cannot be inserted.");
+      }
+    } else{
+    DocumentApp.getUi().alert("Unable to find cursor.");
+      }
   } else{
     table = doc.insertTable(position,cell);
   }
+  
   var t = table.findText(section);
   table.setBorderColor('#d2d2d2');
   t.getElement().asText().setBold(0,section.length-1,true).setFontSize(12).setFontFamily(userProperties.getProperty('hFont'));
   var h = table.findText(subtitle);
-  h.getElement().asText().setItalic(0,subtitle.length-1,true).setFontSize(11).setFontFamily(userProperties.getProperty('tFont'));
+  h.getElement().asText().setItalic(0,subtitle.length-1,true).setFontSize(10).setFontFamily(userProperties.getProperty('tFont')).setForegroundColor('#666666');
 }
 
 function addLog(typeOfLog){
-var userProperties = PropertiesService.getUserProperties();
-var body = DocumentApp.getActiveDocument().getBody();
-body.editAsText().setFontFamily(userProperties.getProperty('tFont'));
-var myTable = [['merge!', 'summary'],['merge!','players']];
-var newTable = body.appendTable(myTable).setBorderColor('#434343');
-var row = newTable.getRow(0);
-var cell = row.getCell(0).setWidth(50); //merge
-cell.setVerticalAlignment(DocumentApp.VerticalAlignment.CENTER);
-cell.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER);
-cell.editAsText().setBold(0,5,true).setItalic(false);
-
-var row2 = newTable.getRow(1);
-var cell2 = row2.getCell(0).setWidth(50) //merge
-cell2.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER);
-cell2.editAsText().setBold(0,5,true).setItalic(false);
-
-var sessionLog = createDoc(userProperties.getProperty('city'),'session');
-var sessionLogId = sessionLog.getId();
-var sessionLogUrl = sessionLog.getUrl();
-
-  var currFile = DocumentApp.getActiveDocument().getId();
-  var thisFile = DriveApp.getFileById(currFile);
-  var parentFolder = thisFile.getParents().next().getId();
-  DriveApp.getFolderById(parentFolder).addFile(DriveApp.getFileById(sessionLogId));
-  
-var returnedLog;
-cell.getChild(0).asText().setLinkUrl(0, 5, sessionLogUrl);
-cell2.getChild(0).asText().setLinkUrl(0, 5, sessionLogUrl);
-
-  switch(typeOfLog)
-  {
-    case "sec":
-      cell.setBackgroundColor('#434343');
-      cell2.setBackgroundColor('#434343');
-      returnedLog = createSession(sessionLog,false);
-      break;
-    case "pub":
-      cell.setBackgroundColor('#fff2cc');
-      cell2.setBackgroundColor('#fff2cc');
-      returnedLog = createSession(sessionLog,false);
-      break;
-    case "pho":
-      cell.setBackgroundColor('#cfe2f3');
-      cell2.setBackgroundColor('#cfe2f3');
-      returnedLog = createSession(sessionLog,true);
-      break;
-    default:
-      cell.setBackgroundColor('#dddddd');
-      cell2.setBackgroundColor('#dddddd');
-      returnedLog = createSession(sessionLog,false);
+  var userProperties = PropertiesService.getUserProperties();
+  var cursor = DocumentApp.getActiveDocument().getCursor();
+  var body = DocumentApp.getActiveDocument().getBody();
+  var myTable = [['merge!', 'summary'],['merge!','players']];
+  var element = cursor.getElement();
+  var parent = element.getParent();
+  if(cursor){
+    if(element){
+      var newTable = body.insertTable(parent.getChildIndex(element)+1, myTable).setBorderColor('#434343');
+    } else{
+      DocumentApp.getUi().alert("Element cannot be inserted.");
+    }
+  } else {
+    DocumentApp.getUi().alert("Unable to find cursor.");
   }
-
+  var row = newTable.getRow(0);
+  row.editAsText().setFontFamily(0,13,userProperties.getProperty('tFont'));
+  var cell = row.getCell(0).setWidth(50); //merge
+  cell.setVerticalAlignment(DocumentApp.VerticalAlignment.CENTER);
+  cell.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+  cell.editAsText().setBold(0,5,true).setItalic(false);
   
+  var row2 = newTable.getRow(1);
+  row2.editAsText().setFontFamily(0,13,userProperties.getProperty('tFont'));
+  var cell2 = row2.getCell(0).setWidth(50) //merge
+  cell2.getChild(0).asParagraph().setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+  cell2.editAsText().setBold(0,5,true).setItalic(false).setFontFamily(0,5,userProperties.getProperty('tFont'));
+  
+  var sessionLog = createDoc(userProperties.getProperty('city'),'session');
+  var sessionLogId = sessionLog.getId();
+  var sessionLogUrl = sessionLog.getUrl();
+  
+    var currFile = DocumentApp.getActiveDocument().getId();
+    var thisFile = DriveApp.getFileById(currFile);
+    var parentFolder = thisFile.getParents().next().getId();
+    DriveApp.getFolderById(parentFolder).addFile(DriveApp.getFileById(sessionLogId));
+    
+  var returnedLog;
+  cell.getChild(0).asText().setLinkUrl(0, 5, sessionLogUrl);
+  cell2.getChild(0).asText().setLinkUrl(0, 5, sessionLogUrl);
+  
+    switch(typeOfLog)
+    {
+      case "sec":
+        cell.setBackgroundColor('#434343');
+        cell2.setBackgroundColor('#434343');
+        returnedLog = createSession(sessionLog,false);
+        break;
+      case "pub":
+        cell.setBackgroundColor('#fff2cc');
+        cell2.setBackgroundColor('#fff2cc');
+        returnedLog = createSession(sessionLog,false);
+        break;
+      case "pho":
+        cell.setBackgroundColor('#cfe2f3');
+        cell2.setBackgroundColor('#cfe2f3');
+        returnedLog = createSession(sessionLog,true);
+        break;
+      default:
+        cell.setBackgroundColor('#dddddd');
+        cell2.setBackgroundColor('#dddddd');
+        returnedLog = createSession(sessionLog,false);
+    }
+  
+    
 }
 
 function createSession(session, isThread){
@@ -496,7 +526,7 @@ function changeThings(a,b,c,d,e,f,g,h){
     userProperties.setProperty('year', g);
   }
   if(h!=''){
-    userProperties.setProperty('area', g);
+    userProperties.setProperty('area', h);
   }
   
 }
@@ -532,6 +562,7 @@ function date(){
   dateText.setBold(0,dateText.getText().length-1,true).setFontFamily(userProperties.getProperty('tFont'));
 }
 //-- End menu functions --//
+
 //-- Menu sidebars --//
 function customizationsSideBar(){
   var html = HtmlService.createHtmlOutputFromFile('custos')    
